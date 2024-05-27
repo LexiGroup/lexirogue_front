@@ -4,6 +4,14 @@ export default {
     "./index.html",
     "./src/**/*.{vue,js,ts,jsx,tsx}",
   ],
+  safelist: [
+    'bg-primary-green',
+    'bg-primary-yellow',
+    'bg-primary-red',
+    'text-primary-green',
+    'text-primary-yellow',
+    'text-primary-red',
+  ],
   theme: {
     extend: {
       colors: {
