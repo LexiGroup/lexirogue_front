@@ -1,4 +1,7 @@
 <script setup lang="ts">
+import {defineProps} from 'vue'
+import {RouterLink} from 'vue-router'
+
 defineProps<{
   label: string | Object,
   backgroundColor: string,
@@ -7,18 +10,13 @@ defineProps<{
 </script>
 
 <template>
-  <RouterLink v-if="typeof label === 'string'"
-       class="my-3 cursor-pointer bg-white inline-block p-1.5 rounded-md border-4 border-black scale-95 hover:scale-100" :to="`${target}`">
-    <div :class="`bg-primary-${backgroundColor} px-14 py-3 rounded flex justify-center`">
-      <p class="text-4xl text-black">{{ label }}</p> <!-- Rajouter couleur texte tailwind palette -->
+  <component :is="target ? RouterLink : 'div'" :to="target ? `${target}` : undefined"
+             class="my-3 cursor-pointer bg-white inline-block p-1.5 rounded-md border-4 border-black scale-95 hover:scale-100">
+    <div :class="`bg-primary-${backgroundColor} ${typeof label === 'string' ? 'px-14' : 'px-7'} py-3 rounded flex justify-center`">
+      <p v-if="typeof label === 'string'" class="text-4xl text-black">{{ label }}</p>
+      <component v-else :is="label" class="w-16 text-black"/>
     </div>
-  </RouterLink>
-  <RouterLink v-else
-       class="my-3 cursor-pointer bg-white inline-block p-1.5 rounded-md border-4 border-black scale-95 hover:scale-100" :to="`${target}`">
-    <div :class="`bg-primary-${backgroundColor} px-7 py-3 rounded flex justify-center`">
-      <component :is="label" class="w-16 text-black"/>
-    </div>
-  </RouterLink>
+  </component>
 </template>
 
 <style scoped>
