@@ -11,6 +11,8 @@ export default {
     'text-primary-green',
     'text-primary-yellow',
     'text-primary-red',
+    'w-8',
+    'w-12',
   ],
   theme: {
     extend: {
