@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import MainMenuButton from "@/components/buttons/MainMenuButton.vue";
-import {Cog6ToothIcon, GlobeAltIcon, ShoppingCartIcon} from "@heroicons/vue/24/outline";
+import {Cog6ToothIcon, GlobeAltIcon, ShoppingCartIcon, UserCircleIcon} from "@heroicons/vue/24/outline";
 </script>
 
 <template>
@@ -21,6 +21,7 @@ import {Cog6ToothIcon, GlobeAltIcon, ShoppingCartIcon} from "@heroicons/vue/24/o
     </div>
     <div class="col-span-3 row-span-3 bg-gray-400">
     </div>
+    <main-menu-button class="absolute bottom-16 right-16" background-color="red" :label="UserCircleIcon"/>
   </div>
 
 </template>
