@@ -5,19 +5,21 @@ import {computed, ref} from "vue";
 const props = defineProps<{
   title: string,
   category: string
-  difficulty: number
+  difficulty?: number
   imgUrl?: string
 }>()
 
 const difficultyRef = ref(props.difficulty);
 
 const difficultyColor = computed(() => {
-  if (difficultyRef.value === 0) {
+  if (difficultyRef.value === 1) {
     return 'green';
-  } else if (difficultyRef.value === 1) {
+  } else if (difficultyRef.value === 2) {
     return 'yellow';
-  } else {
+  } else if (difficultyRef.value === 3) {
     return 'red';
+  } else {
+    return '';
   }
 })
 </script>
@@ -31,10 +33,10 @@ const difficultyColor = computed(() => {
         <img class="object-cover w-full" :src="'src/assets/img/' + props.imgUrl" :alt="`${title}`"> <!-- TODO: Utiliser '@' plutôt que `src` pour webpack -->
       </div>
       <div>
-        <p class="text-4xl flex justify-center my-2 text-center">{{ props.title }}</p>
-        <CategoryTag :label="`${props.category}`"/>
+        <p class="text-4xl flex justify-center items-center my-2 text-center">{{ props.title }} <span v-if="!props.difficulty"><!--<component :is="ShoppingBagIcon" class="w-8"/>--></span></p>
+        <CategoryTag v-if="props.difficulty" :label="`${props.category}`"/>
       </div>
-      <span class="flex justify-center mt-2 text-3xl">En X lettres</span>
+      <span v-if="props.difficulty" class="flex justify-center mt-2 text-3xl">En X lettres</span>
     </div>
   </div>
 </template>
