@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import {ref} from "vue";
 
-let word: String = "Possum";
-const dictionary: String[] = ["Possum", "Capybara", "Flower"];
+let word: String = "Possum"; //TODO: Faire une requête pour charger un mot
+const dictionary: String[] = ["Possum", "Capybara", "Flower"]; //TODO: Faire une requête pour charger un dictionnaire?
 
 let key_pressed = ref<String[]>([]);
 let input_key_pressed = ref<number>(0)
@@ -16,6 +16,7 @@ word.split("").forEach(letter => {
 
 function changeWordToBeFound(): void {
   word = dictionary[Math.floor(Math.random() * dictionary.length)];
+  //TODO: Faire une requête pour récupérer un nouveau mot
   trials.value = [];
   resetInput();
 }
@@ -28,10 +29,13 @@ function resetInput(): void {
   })
 }
 
+//TODO: Déplacer cette fonction dans le back-office et remplacer ses appels par une requête API
 function verifyWord(trial: String): void {
   if (trial === word) {
+    //TODO: Augmenter le score et voir avec la route si un autre mot doit être chargé ou c'est le tour du boss
     changeWordToBeFound();
   } else {
+    //Plus de tentatives
     if (trials.value.length >= MAXIMUM_TRIALS) {
       changeWordToBeFound();
       //TODO: Retirer de la vie (et.ou du score?)
@@ -69,7 +73,6 @@ document.addEventListener('keydown', (event: KeyboardEvent) => {
 });
 
 function getLetterClass(letter: any, index: any) {
-
   if (letter === word[index]) {
     return 'text-primary-green';
   } else if (word.includes(letter)) {
