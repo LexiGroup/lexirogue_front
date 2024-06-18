@@ -9,8 +9,8 @@ interface Item {
 </script>
 
 <template>
-  <div class="bg-[url('src/assets/img/wood.png')] p-3 mt-8 bg-no-repeat bg-cover w-full md:w-1/2 m-auto">
-    <div class="bg-[url('src/assets/img/board.png')] bg-no-repeat bg-cover flex flex-col md:grid md:grid-cols-2 md:gap-6 p-2">
+  <div class="bg-[url('src/assets/img/wood.png')] p-3 bg-no-repeat bg-cover w-full md:w-1/2 m-auto">
+    <div class="bg-[url('src/assets/img/board.png')] bg-no-repeat bg-cover flex flex-col content-center md:h-full md:grid md:grid-cols-2 md:gap-6 p-2">
       <div>
         <p class="text-center text-white">Inventory</p>
         <div class="flex items-center justify-around w-full">
