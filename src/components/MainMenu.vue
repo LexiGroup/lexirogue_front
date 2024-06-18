@@ -8,7 +8,7 @@ import {Cog6ToothIcon, GlobeAltIcon, ShoppingCartIcon, UserCircleIcon} from "@he
     <div class="col-span-2 row-span-5 flex items-center justify-center">
       <div class="flex flex-col items-center">
         <main-menu-button target="play" label="JOUER" background-color="red"/>
-        <main-menu-button target="play-day" label="JEU DU JOUR" background-color="red"/>
+        <main-menu-button target="game" label="JEU DU JOUR" background-color="red"/>
         <main-menu-button target="multiplayer" label="MULTIJOUEUR" background-color="red"/>
       </div>
     </div>
