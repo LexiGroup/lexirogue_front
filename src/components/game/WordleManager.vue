@@ -1,22 +1,31 @@
 <script setup lang="ts">
-import {ref} from "vue";
+import {onMounted, ref} from "vue";
+import axios from "axios";
 
-let word: String = "Possum"; //TODO: Faire une requête pour charger un mot
-const dictionary: String[] = ["Possum", "Capybara", "Flower"]; //TODO: Faire une requête pour charger un dictionnaire?
-
-let key_pressed = ref<String[]>([]);
+let word = ref<string>("");
+let key_pressed = ref<string[]>([]);
 let input_key_pressed = ref<number>(0)
-
-let trials = ref<String[]>([]);
+let trials = ref<string[]>([]);
 const MAXIMUM_TRIALS = 3;
 
-word.split("").forEach(letter => {
-  key_pressed.value.push("");
-})
+onMounted(async () => {
+  word.value = await getRandomWord();
+  console.log(word.value)
+  resetInput();
+});
 
-function changeWordToBeFound(): void {
-  word = dictionary[Math.floor(Math.random() * dictionary.length)];
-  //TODO: Faire une requête pour récupérer un nouveau mot
+async function getRandomWord(): Promise<string> {
+  try {
+    const response = await axios.get("http://localhost:3000/word/random");
+    return response.data.ortho;
+  } catch (error) {
+    return "Possum";
+  }
+}
+
+async function changeWordToBeFound(): Promise<void> {
+  word.value = await getRandomWord();
+  console.log(word.value)
   trials.value = [];
   resetInput();
 }
@@ -24,14 +33,14 @@ function changeWordToBeFound(): void {
 function resetInput(): void {
   key_pressed.value = [];
   input_key_pressed.value = 0;
-  word.split("").forEach(letter => {
+  word.value.split("").forEach(letter => {
     key_pressed.value.push("");
   })
 }
 
 //TODO: Déplacer cette fonction dans le back-office et remplacer ses appels par une requête API
-function verifyWord(trial: String): void {
-  if (trial === word) {
+function verifyWord(trial: string): void {
+  if (trial === word.value) {
     //TODO: Augmenter le score et voir avec la route si un autre mot doit être chargé ou c'est le tour du boss
     changeWordToBeFound();
   } else {
@@ -59,13 +68,13 @@ document.addEventListener('keydown', (event: KeyboardEvent) => {
     input_key_pressed.value--;
     key_pressed.value[input_key_pressed.value] = "";
   } else if (keyName === "Enter") {
-    if (key_pressed.value.join('').length < word.length) {
+    if (key_pressed.value.join('').length < word.value.length) {
       alert('Enter word too short!');
     } else {
       verifyWord(key_pressed.value.join(''));
     }
   } else {
-    if (input_key_pressed.value < word.length) {
+    if (input_key_pressed.value < word.value.length) {
       key_pressed.value[input_key_pressed.value] = event.key;
       input_key_pressed.value++;
     }
@@ -73,9 +82,9 @@ document.addEventListener('keydown', (event: KeyboardEvent) => {
 });
 
 function getLetterClass(letter: any, index: any) {
-  if (letter === word[index]) {
+  if (letter === word.value[index]) {
     return 'text-primary-green';
-  } else if (word.includes(letter)) {
+  } else if (word.value.includes(letter)) {
     return 'text-primary-yellow';
   } else {
     return '';
