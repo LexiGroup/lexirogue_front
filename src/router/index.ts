@@ -1,8 +1,8 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import HomeView from '../views/HomeView.vue'
-import SoloJourneyMenu from "@/views/SoloJourneyMenuView.vue";
-import Shop from "@/views/ShopView.vue";
-import Game from "@/views/GameView.vue";
+import ShopView from "@/views/ShopView.vue";
+import GameView from "@/views/GameView.vue";
+import SoloJourneyMenuView from "@/views/SoloJourneyMenuView.vue";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -16,17 +16,17 @@ const router = createRouter({
     {
       path: '/play',
       name: 'solo-journey',
-      component: SoloJourneyMenu
+      component: SoloJourneyMenuView
     },
     {
       path: '/shop',
       name: 'shop',
-      component: Shop
+      component: ShopView
     },
     {
       path: '/game',
       name: 'game',
-      component: Game
+      component: GameView
     },
   ]
 })

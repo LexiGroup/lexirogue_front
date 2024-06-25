@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import TheWelcome from '../components/MainMenu.vue'
+import TheWelcome from '../views/MainMenuView.vue'
 </script>
 
 <template>
