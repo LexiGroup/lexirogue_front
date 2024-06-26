@@ -4,6 +4,8 @@ import {RouterLink} from "vue-router";
 import {defineProps} from "vue";
 import axios from "axios";
 
+const apiUrl = import.meta.env.VITE_API_URL;
+
 defineProps<{
   label?: string | Object,
   backgroundColor: string,
@@ -15,7 +17,7 @@ import { useAuthStore } from '@/stores/auth';
 const authStore = useAuthStore();
 
 const loginWithGoogle = (): void => {
-  window.location.href = 'http://localhost:3000/auth/google';
+  window.location.href = `${apiUrl}/auth/google/`;
 }
 
 </script>

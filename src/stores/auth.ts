@@ -1,17 +1,20 @@
 import { defineStore } from 'pinia';
 import axios from 'axios';
-import {jwtDecode} from "jwt-decode";
+import {jwtDecode} from 'jwt-decode';
 
+const apiUrl = import.meta.env.VITE_API_URL;
 
 interface AuthState {
     token: string | null;
     user: Record<string, any> | null;
+    player: Record<string, any> | null;
 }
 
 export const useAuthStore = defineStore('auth', {
     state: (): AuthState => ({
         token: null,
         user: null,
+        player: null,
     }),
     actions: {
         setToken(token: string): void {
@@ -22,20 +25,31 @@ export const useAuthStore = defineStore('auth', {
         async fetchUser(): Promise<void> {
             if (this.token) {
                 try {
-                    const response = await axios.get('http://localhost:3000/auth/user', {
+                    const response = await axios.get(`${apiUrl}/auth/user`, {
                         headers: {
                             Authorization: `Bearer ${this.token}`,
                         },
                     });
                     this.user = response.data;
+
+                    if (this.user && this.user.userId) {
+                        const playerResponse = await axios.get(`${apiUrl}/player/user/${this.user.userId}`, {
+                            headers: {
+                                Authorization: `Bearer ${this.token}`,
+                            },
+                        });
+                        this.player = playerResponse.data;
+
+                    }
                 } catch (error) {
-                    console.error('Erreur lors de la récupération des informations utilisateur', error);
+                    console.error('Erreur lors de la récupération des informations utilisateur ou joueur', error);
                 }
             }
         },
         logout(): void {
             this.token = null;
             this.user = null;
+            this.player = null;
             localStorage.removeItem('authToken');
         },
         loadTokenFromStorage(): void {
@@ -47,7 +61,7 @@ export const useAuthStore = defineStore('auth', {
         },
         async refreshToken(): Promise<void> {
             try {
-                const response = await axios.post('http://localhost:3000/auth/refresh-token', {}, {
+                const response = await axios.post(`${apiUrl}/auth/refresh-token`, {}, {
                     headers: {
                         Authorization: `Bearer ${this.token}`,
                     },
