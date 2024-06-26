@@ -68,21 +68,17 @@ function verifyWord(trial: string): void {
 
 document.addEventListener('keydown', (event: KeyboardEvent) => {
   const keyName = event.key;
-  if (keyName === "Shift"
-      || keyName === "Control"
-      || keyName === "Tab"
-      || keyName === "CapsLock"
-      || keyName === "Escape"
-      || keyName === "Alt") {
-    event.preventDefault();
-  } else if (keyName === "Backspace") {
-    input_key_pressed.value--;
-    key_pressed.value[input_key_pressed.value] = "";
-  } else if (keyName === "Enter") {
-    if (key_pressed.value.join('').length < word.value.length) {
-      alert('Enter word too short!');
-    } else {
-      socket.emit("verifyWord", word.value)
+  if (!/^\p{L}$/u.test(keyName)) {
+    if (keyName === "Backspace") {
+      input_key_pressed.value--;
+      key_pressed.value[input_key_pressed.value] = "";
+    } else if (keyName === "Enter") {
+      if (key_pressed.value.join('').length < word.value.length) {
+        alert('Enter word too short!');
+      } else {
+        socket.emit("verifyWord", word.value);
+      }
+      event.preventDefault();
     }
   } else {
     if (input_key_pressed.value < word.value.length) {
