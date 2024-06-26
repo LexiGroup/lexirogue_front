@@ -1,18 +1,30 @@
 <script setup lang="ts">
 import {onMounted, ref} from "vue";
 import axios from "axios";
+import {io} from "socket.io-client";
+
+const socket = io('http://localhost:3000');
 
 let word = ref<string>("");
 let key_pressed = ref<string[]>([]);
 let input_key_pressed = ref<number>(0)
 let trials = ref<string[]>([]);
 const MAXIMUM_TRIALS = 3;
+const message = ref<string>("");
 
 onMounted(async () => {
   word.value = await getRandomWord();
   console.log(word.value)
   resetInput();
 });
+
+socket.on("messageResponse", (response) => {
+  message.value = response;
+})
+
+socket.on("wordVerificationResponse", (response) => {
+  console.log(response)
+})
 
 async function getRandomWord(): Promise<string> {
   try {
@@ -38,7 +50,6 @@ function resetInput(): void {
   })
 }
 
-//TODO: Déplacer cette fonction dans le back-office et remplacer ses appels par une requête API
 function verifyWord(trial: string): void {
   if (trial === word.value) {
     //TODO: Augmenter le score et voir avec la route si un autre mot doit être chargé ou c'est le tour du boss
@@ -71,7 +82,7 @@ document.addEventListener('keydown', (event: KeyboardEvent) => {
     if (key_pressed.value.join('').length < word.value.length) {
       alert('Enter word too short!');
     } else {
-      verifyWord(key_pressed.value.join(''));
+      socket.emit("verifyWord", word.value)
     }
   } else {
     if (input_key_pressed.value < word.value.length) {
@@ -94,6 +105,7 @@ function getLetterClass(letter: any, index: any) {
 
 <template>
   <div class="h-80 mt-8">
+    <h1>{{message}}</h1>
     <span v-for="letter in key_pressed" class="text-3xl border border-black px-5 py-2 mx-3">
       {{ letter }}
     </span>
