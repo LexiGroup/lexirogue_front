@@ -45,7 +45,7 @@ export default defineComponent({
       required: true,
     },
   },
-  setup(props) {
+  setup() {
     const authStore = useAuthStore();
     const username = ref('');
 
@@ -75,7 +75,9 @@ export default defineComponent({
         console.log(`${import.meta.env.VITE_API_URL}/player/${authStore.player.id}`)
         try {
             await axios.put(`${import.meta.env.VITE_API_URL}/player/${authStore.player.id}`, { username: username.value }, {
-
+            headers: {
+              Authorization: `Bearer ${authStore.token}`,
+            },
           });
           authStore.player.username = username.value;
 
