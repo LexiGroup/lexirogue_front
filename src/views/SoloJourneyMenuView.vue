@@ -11,6 +11,7 @@ interface Boss {
   name: string;
   description: string;
   default_life: number;
+  bossCategories: { category: { name: string } }[];
 }
 
 const bosses = ref<Boss[]>([]);
@@ -28,13 +29,20 @@ async function getBosses(): Promise<Boss[]> {
     return [];
   }
 }
+
+function getBossCategory(boss: Boss): string {
+  if (boss.bossCategories && boss.bossCategories.length > 0) {
+    return boss.bossCategories[0].category.name;
+  }
+  return 'Unknown Category';
+}
 </script>
 
 <template>
   <div>
     <MainMenuButton background-color="transparent" target="/" :label="ArrowLeftIcon" class="absolute top-3 left-32" />
     <div class="flex flex-row">
-      <Card v-for="boss in bosses" :key="boss.id" :title="boss.name" category="capybara" img-url="CapyHero.png" :difficulty="1"/>
+      <Card v-for="boss in bosses" :key="boss.id" :title="boss.name" :category="boss.bossCategories[0].category.name" img-url="" :difficulty="1"/>
       <RouterLink to="shop">
         <Card class="h-full" title="It's shopping time!" category="shop" img-url="Shop.png"/>
       </RouterLink>
