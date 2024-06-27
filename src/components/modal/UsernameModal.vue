@@ -1,8 +1,8 @@
 
 <template>
   <div v-if="isAuthenticated">
-  <div v-if="isVisible" class="modal-overlay" @click="close">
-    <div class="modal-content w-1/4 h-3/4 bg-no-repeat p-14 flex-row  justify-items-center justify-self-center justify-center " @click.stop>
+    <div v-if="isVisible" class="modal-overlay" @click="close">
+      <div class="modal-content w-1/4 h-3/4 bg-no-repeat p-14 flex-row  justify-items-center justify-self-center justify-center " @click.stop>
         <div>
           <button @click="close" class="close-button">X</button>
           <h1>Profil</h1>
@@ -12,17 +12,17 @@
             <button type="submit">Mettre à jour</button>
           </form>
         </div>
-      <nav class="justify-self-stretch">
-        <main-menu-button @click="logout" text-size="18"  class="text-sm" v-if="isAuthenticated" background-color="red" label="Se déconnecter"  />
+        <nav class="justify-self-stretch">
+          <main-menu-button @click="logout" text-size="18"  class="text-sm" v-if="isAuthenticated" background-color="red" label="Se déconnecter"  />
 
-      </nav>
+        </nav>
+      </div>
     </div>
-  </div>
   </div>
 </template>
 
 <script lang="ts">
-import {computed, defineComponent, ref, watch} from 'vue';
+import { defineComponent, ref, watch} from 'vue';
 import axios from 'axios';
 import { useAuthStore } from '@/stores/auth';
 import {jwtDecode} from "jwt-decode";
@@ -60,18 +60,13 @@ export default defineComponent({
     );
 
 
-    const isAuthenticated = computed(() => !!authStore.token);
 
-    const logout = (): void => {
-      authStore.logout();
-
-    };
 
     const updateUsername = async () => {
       if (authStore.player && authStore.player.id) {
         console.log(`${import.meta.env.VITE_API_URL}/player/${authStore.player.id}`)
         try {
-            await axios.put(`${import.meta.env.VITE_API_URL}/player/${authStore.player.id}`, { username: username.value }, {
+          await axios.put(`${import.meta.env.VITE_API_URL}/player/${authStore.player.id}`, { username: username.value }, {
             headers: {
               Authorization: `Bearer ${authStore.token}`,
             },

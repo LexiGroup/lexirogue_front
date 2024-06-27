@@ -1,10 +1,13 @@
 <script setup lang="ts">
-import { onMounted, ref } from 'vue';
+import {computed, onMounted, ref, watch} from 'vue';
 import axios from 'axios';
 import Card from '@/components/cards/Card.vue';
 import MainMenuButton from '@/components/buttons/MainMenuButton.vue';
 import { ArrowLeftIcon } from '@heroicons/vue/24/outline';
 import { RouterLink } from 'vue-router';
+import { useAuthStore } from '@/stores/auth';
+
+const authStore = useAuthStore();
 
 interface Boss {
   id: number;
@@ -16,10 +19,34 @@ interface Boss {
 }
 
 const bosses = ref<Boss[]>([]);
+const isAuthenticated = computed(() => !!authStore.token);
+
+async function fetchPlayerData(playerId: number) {
+  try {
+    const response = await axios.get(`http://localhost:3000/game/player/${playerId}`);
+    console.log(response.data);
+  } catch (error) {
+    console.error(`Error fetching player data: ${error}`);
+  }
+}
 
 onMounted(async () => {
   bosses.value = await getBosses();
+  // TODO : Create different action on Autenticated and not Autenticated
+  if (authStore.player?.id) {
+    await fetchPlayerData(authStore.player.id);
+  }
+
 });
+
+watch(
+    () => authStore.player?.id,
+    (newId) => {
+      if (newId) {
+        fetchPlayerData(newId);
+      }
+    }
+);
 
 async function getBosses(): Promise<Boss[]> {
   try {
@@ -30,6 +57,7 @@ async function getBosses(): Promise<Boss[]> {
     return [];
   }
 }
+
 
 function getBossCategory(boss: Boss): string {
   if (boss.bossCategories && boss.bossCategories.length > 0) {
@@ -43,7 +71,16 @@ function getBossCategory(boss: Boss): string {
   <div>
     <MainMenuButton background-color="transparent" target="/" :label="ArrowLeftIcon" class="absolute top-3 left-32" />
     <div class="flex flex-row">
-      <Card v-for="boss in bosses" :key="boss.id" :title="boss.name" :category="boss.bossCategories[0].category.name" :img-url="boss.image_url" :difficulty="1"/>
+      <Card
+          @click="() => $router.push({ name: 'game'})"
+          class="cursor-pointer"
+          v-for="boss in bosses"
+          :key="boss.id"
+          :title="boss.name"
+          :category="getBossCategory(boss)"
+          :img-url="boss.image_url"
+          :difficulty="1"
+      />
       <RouterLink to="shop">
         <Card class="h-full" title="It's shopping time!" category="shop" img-url="Shop.png"/>
       </RouterLink>
@@ -52,5 +89,5 @@ function getBossCategory(boss: Boss): string {
 </template>
 
 <style scoped>
-
+/* Add your styles here */
 </style>

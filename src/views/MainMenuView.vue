@@ -5,6 +5,7 @@ import GoogleButton from "@/components/buttons/GoogleButton.vue";
 import ProfilModal from "@/components/modal/ProfilModal.vue";
 import {onMounted, computed, ref, type UnwrapRef, type Ref} from 'vue';
 import { useAuthStore } from '@/stores/auth';
+import * as events from "node:events";
 
 const authStore = useAuthStore();
 const isAuthenticated = computed(() => !!authStore.token);
@@ -21,6 +22,18 @@ const profile = () => {
   showModal.value = true;
 };
 
+const game = () => {
+  if(!isAuthenticated.value) {
+    alert("Vous devez être connecté pour jouer");
+  } else {
+    location.href = "/play";
+
+  }
+};
+
+const google = () => {
+  console.log(isAuthenticated)
+};
 </script>
 
 <template>
@@ -28,7 +41,7 @@ const profile = () => {
   <div class="grid grid-cols-5 grid-rows-5 gap-x-6 gap-y-4">
     <div class="col-span-2 row-span-5 flex items-center justify-center">
       <div class="flex flex-col items-center">
-        <main-menu-button target="play" label="JOUER" background-color="red"/>
+        <main-menu-button  @click="game" label="JOUER" background-color="red"/>
         <main-menu-button target="game" label="JEU DU JOUR" background-color="red"/>
         <main-menu-button target="multiplayer" label="MULTIJOUEUR" background-color="red"/>
       </div>
@@ -47,7 +60,7 @@ const profile = () => {
       <ProfilModal :isVisible="showModal" @close="showModal = false">
       </ProfilModal>
     </div>
-     <google-button v-if="!isAuthenticated"  class="absolute bottom-16 right-16 w-30" background-color="red"/>
+     <google-button v-if="!isAuthenticated" @click="google"  class="absolute bottom-16 right-16 w-30" background-color="red"/>
       <main-menu-button  class="absolute bottom-16 right-16 w-30" v-if="isAuthenticated" background-color="red" :label="UserCircleIcon" @click="profile"/>
   </div>
 

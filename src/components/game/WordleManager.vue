@@ -2,6 +2,11 @@
 import {onMounted, ref} from "vue";
 import axios from "axios";
 import {io} from "socket.io-client";
+import { useAuthStore } from '@/stores/auth';
+
+const authStore = useAuthStore();
+
+
 
 const socket = io('http://localhost:3000');
 
