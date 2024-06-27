@@ -11,6 +11,7 @@ interface Boss {
   name: string;
   description: string;
   default_life: number;
+  image_url: string;
   bossCategories: { category: { name: string } }[];
 }
 
@@ -42,7 +43,7 @@ function getBossCategory(boss: Boss): string {
   <div>
     <MainMenuButton background-color="transparent" target="/" :label="ArrowLeftIcon" class="absolute top-3 left-32" />
     <div class="flex flex-row">
-      <Card v-for="boss in bosses" :key="boss.id" :title="boss.name" :category="boss.bossCategories[0].category.name" img-url="" :difficulty="1"/>
+      <Card v-for="boss in bosses" :key="boss.id" :title="boss.name" :category="boss.bossCategories[0].category.name" :img-url="boss.image_url" :difficulty="1"/>
       <RouterLink to="shop">
         <Card class="h-full" title="It's shopping time!" category="shop" img-url="Shop.png"/>
       </RouterLink>
