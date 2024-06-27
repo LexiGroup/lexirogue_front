@@ -4,6 +4,7 @@ import TheWelcome from '../views/MainMenuView.vue'
 
 <template>
   <main class="w-full">
+  <!-- TODO: Ajouter mot comme minecraft dans menu   -->
     <TheWelcome />
   </main>
 </template>
