@@ -1,5 +1,6 @@
 <script setup lang="ts">
 
+import ScoreboardTimer from "@/components/game/ScoreboardTimer.vue";
 </script>
 
 <template>
@@ -8,7 +9,7 @@
         class="bg-[url('src/assets/img/board.png')] bg-no-repeat bg-cover p-2">
       <p class="text-center text-white font-bold text-2xl">Score: <span>352</span></p>
       <p class="text-center text-white text-lg">round <span>3</span></p>
-      <p class="text-center text-white text-5xl"><span>3:00</span></p>
+      <ScoreboardTimer/>
     </div>
   </div>
 </template>
