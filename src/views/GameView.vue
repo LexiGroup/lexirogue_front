@@ -14,6 +14,7 @@ import LifeUi from "@/components/game/LifeUi.vue";
 
 const authStore = useAuthStore();
 const playerLife = ref<number>(0);
+const score = ref<number>(0);
 
 
 async function fetchPlayerData(playerId: number) {
@@ -21,15 +22,14 @@ async function fetchPlayerData(playerId: number) {
     const response = await axios.get(`http://localhost:3000/game/player/${playerId}`);
     console.log(response.data);
     playerLife.value = response.data.life;
+    score.value = response.data.score;
   } catch (error) {
     console.error(`Error fetching player data: ${error}`);
   }
 }
 
-const test = 100;
-
 onMounted(async () => {
-  // TODO : Create different action on Autenticated and not Autenticated
+  // TODO : Create different action on Autenticated and not Autenticated (Pop up who ask for username and create player on server)
   if (authStore.player?.id) {
     const game = await fetchPlayerData(authStore.player.id);
   }
@@ -56,7 +56,7 @@ watch(
       <BuffDebuff color="green"/>
     </div>
     <div class="col-span-3 row-span-2">
-      <Scoreboard class="row-span-1"/>
+      <Scoreboard :score="score" class="row-span-1"/>
       <PlaceHolder/>
       <KeyboardInput class="row-span-1"/>
     </div>
