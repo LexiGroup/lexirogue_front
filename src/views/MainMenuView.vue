@@ -6,6 +6,9 @@ import ProfilModal from "@/components/modal/ProfilModal.vue";
 import {onMounted, computed, ref, type UnwrapRef, type Ref} from 'vue';
 import { useAuthStore } from '@/stores/auth';
 import * as events from "node:events";
+import axios from "axios";
+import UsernameModal from "@/components/modal/UsernameModal.vue";
+
 
 const authStore = useAuthStore();
 const isAuthenticated = computed(() => !!authStore.token);
@@ -22,9 +25,19 @@ const profile = () => {
   showModal.value = true;
 };
 
+async function createNewPlayer(username: string) {
+  try {
+    const response = await axios.post(`http://localhost:3000/player/`, { username });
+    console.log(response.data);
+  } catch (error) {
+    console.error(`Error creating player: ${error}`);
+  }
+}
+
 const game = () => {
   if(!isAuthenticated.value) {
-    alert("Vous devez être connecté pour jouer");
+    showModal.value = true;
+
   } else {
     location.href = "/play";
 
@@ -39,6 +52,7 @@ const google = () => {
 <template>
 
   <div class="grid grid-cols-5 grid-rows-5 gap-x-6 gap-y-4">
+        <username-modal   :is-visible="showModal" @close="showModal = false" :create-new-player="createNewPlayer"/>
     <div class="col-span-2 row-span-5 flex items-center justify-center">
       <div class="flex flex-col items-center">
         <main-menu-button  @click="game" label="JOUER" background-color="red"/>

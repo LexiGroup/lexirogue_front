@@ -30,6 +30,8 @@ async function fetchPlayerData(playerId: number) {
   }
 }
 
+
+
 onMounted(async () => {
   bosses.value = await getBosses();
   // TODO : Create different action on Autenticated and not Autenticated
