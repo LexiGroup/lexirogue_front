@@ -31,6 +31,7 @@ async function fetchPlayerData(playerId: number) {
 onMounted(async () => {
   // TODO : Create different action on Autenticated and not Autenticated (Pop up who ask for username and create player on server)
   if (authStore.player?.id) {
+    console.log('fetching player data' + authStore.player.id)
     const game = await fetchPlayerData(authStore.player.id);
   }
 });
@@ -40,6 +41,7 @@ watch(
     (newId) => {
       if (newId) {
         fetchPlayerData(newId);
+        console.log('fetching player new id test test test')
       }
     }
 );

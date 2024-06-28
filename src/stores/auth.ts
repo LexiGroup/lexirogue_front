@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia';
 import axios from 'axios';
-import {jwtDecode} from 'jwt-decode';
+import {jwtDecode} from "jwt-decode";
 
 const apiUrl = import.meta.env.VITE_API_URL;
 
@@ -39,7 +39,7 @@ export const useAuthStore = defineStore('auth', {
                             },
                         });
                         this.player = playerResponse.data;
-
+                        this.savePlayerToLocalStorage(this.player);
                     }
                 } catch (error) {
                     console.error('Erreur lors de la récupération des informations utilisateur ou joueur', error);
@@ -51,12 +51,15 @@ export const useAuthStore = defineStore('auth', {
             this.user = null;
             this.player = null;
             localStorage.removeItem('authToken');
+            localStorage.removeItem('player');
         },
         loadTokenFromStorage(): void {
             const token = localStorage.getItem('authToken');
             if (token) {
                 this.token = token;
                 this.fetchUser();
+            } else {
+                this.loadPlayerFromLocalStorage();
             }
         },
         async refreshToken(): Promise<void> {
@@ -79,6 +82,15 @@ export const useAuthStore = defineStore('auth', {
         async ensureTokenValidity(): Promise<void> {
             if (this.token && this.isTokenExpired(this.token)) {
                 await this.refreshToken();
+            }
+        },
+        savePlayerToLocalStorage(player: any): void {
+            localStorage.setItem('player', JSON.stringify(player));
+        },
+        loadPlayerFromLocalStorage(): void {
+            const player = localStorage.getItem('player');
+            if (player) {
+                this.player = JSON.parse(player);
             }
         },
     },

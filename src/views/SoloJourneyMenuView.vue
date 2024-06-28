@@ -36,6 +36,7 @@ onMounted(async () => {
   bosses.value = await getBosses();
   // TODO : Create different action on Autenticated and not Autenticated
   if (authStore.player?.id) {
+    console.log('fetching player data')
     await fetchPlayerData(authStore.player.id);
   }
 
