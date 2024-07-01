@@ -24,6 +24,7 @@ socket.on("wordIsEqual", (response) => {
     changeWordToBeFound();
   } else {
     if (trials.value.length >= MAXIMUM_TRIALS) {
+      alert('Défaite')
       changeWordToBeFound();
       //TODO: Retirer de la vie (et.ou du score?)
     } else {
