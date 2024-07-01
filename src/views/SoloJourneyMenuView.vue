@@ -1,13 +1,18 @@
 <script setup lang="ts">
-import {computed, onMounted, ref, watch} from 'vue';
+import { computed, onMounted, ref, watch } from 'vue';
 import axios from 'axios';
 import Card from '@/components/cards/Card.vue';
 import MainMenuButton from '@/components/buttons/MainMenuButton.vue';
 import { ArrowLeftIcon } from '@heroicons/vue/24/outline';
 import { RouterLink } from 'vue-router';
 import { useAuthStore } from '@/stores/auth';
+import {useRouteStore} from "@/stores/routes";
+import router from "@/router";
 
 const authStore = useAuthStore();
+const routeStore = useRouteStore();
+
+const apiUrl = import.meta.env.VITE_API_URL;
 
 interface Boss {
   id: number;
@@ -19,27 +24,68 @@ interface Boss {
 }
 
 const bosses = ref<Boss[]>([]);
+const easyBosses = ref<{ boss: Boss, letters: number }[]>([]);
+const normalBosses = ref<{ boss: Boss, letters: number }[]>([]);
+const hardBosses = ref<{ boss: Boss, letters: number }[]>([]);
 const isAuthenticated = computed(() => !!authStore.token);
 
 async function fetchPlayerData(playerId: number) {
   try {
-    const response = await axios.get(`http://localhost:3000/game/player/${playerId}`);
-    console.log(response.data);
+    const response = await axios.get(`${apiUrl}/game/player/${playerId}`);
+    console.log('Player data:', response.data);
   } catch (error) {
     console.error(`Error fetching player data: ${error}`);
   }
 }
 
-
+function getNumberLetter(level: number): number {
+  let length: number;
+  if (level === 1) {
+    length = Math.floor(Math.random() * (5 - 3 + 1)) + 3;
+  } else if (level === 2) {
+    length = Math.floor(Math.random() * (8 - 6 + 1)) + 6;
+  } else if (level === 3) {
+    length = Math.floor(Math.random() * (14 - 7 + 1)) + 7;
+  } else {
+    length = 0;
+  }
+  return length;
+}
 
 onMounted(async () => {
-  bosses.value = await getBosses();
-  // TODO : Create different action on Autenticated and not Autenticated
+  const allBosses = await getBosses();
+  console.log('All bosses:', allBosses);
+
+  // Répartir les bosses en trois groupes : facile, moyen, difficile
+  allBosses.forEach((boss, index) => {
+    let difficulty: number;
+    if (index % 3 === 0) {
+      difficulty = 1;
+    } else if (index % 3 === 1) {
+      difficulty = 2;
+    } else {
+      difficulty = 3;
+    }
+
+    const letters = getNumberLetter(difficulty);
+    if (difficulty === 1) {
+      easyBosses.value.push({ boss, letters });
+    } else if (difficulty === 2) {
+      normalBosses.value.push({ boss, letters });
+    } else if (difficulty === 3) {
+      hardBosses.value.push({ boss, letters });
+    }
+    console.log(`Boss: ${boss.name}, Difficulty: ${difficulty}, Letters: ${letters}`);
+  });
+
+  console.log('Easy bosses:', easyBosses.value);
+  console.log('Normal bosses:', normalBosses.value);
+  console.log('Hard bosses:', hardBosses.value);
+
   if (authStore.player?.id) {
-    console.log('fetching player data')
+    console.log('fetching player data');
     await fetchPlayerData(authStore.player.id);
   }
-
 });
 
 watch(
@@ -61,36 +107,80 @@ async function getBosses(): Promise<Boss[]> {
   }
 }
 
-
 function getBossCategory(boss: Boss): string {
   if (boss.bossCategories && boss.bossCategories.length > 0) {
     return boss.bossCategories[0].category.name;
   }
   return 'Unknown Category';
 }
+
+function handleCardClick(boss: Boss, difficulty: number, letters: number) {
+  routeStore.setRoute({
+    bossId: boss.id,
+    name: boss.name,
+    difficulty,
+    nbLetter: letters,
+  });
+  router.push({ name: 'game' });
+}
+
 </script>
 
 <template>
   <div>
     <MainMenuButton background-color="transparent" target="/" :label="ArrowLeftIcon" class="absolute top-3 left-32" />
-    <div class="flex flex-row">
-      <Card
-          @click="() => $router.push({ name: 'game'})"
-          class="cursor-pointer"
-          v-for="boss in bosses"
-          :key="boss.id"
-          :title="boss.name"
-          :category="getBossCategory(boss)"
-          :img-url="boss.image_url"
-          :difficulty="1"
-      />
-      <RouterLink to="shop">
-        <Card class="h-full" title="It's shopping time!" category="shop" img-url="Shop.png"/>
-      </RouterLink>
+    <div class="flex flex-row flex-wrap justify-center mt-32">
+      <div class="w-1/4 p-2">
+        <div class="flex flex-col space-y-4">
+          <Card
+              v-for="{ boss, letters } in easyBosses"
+              :key="boss.id"
+              @click="handleCardClick(boss, 1, letters)"
+              class="cursor-pointer"
+              :title="boss.name"
+              :category="getBossCategory(boss)"
+              :img-url="boss.image_url"
+              :difficulty="1"
+              :nbLetter="letters"
+          />
+        </div>
+      </div>
+      <div class="w-1/4 p-2">
+        <div class="flex flex-col space-y-4">
+          <Card
+              v-for="{ boss, letters } in normalBosses"
+              :key="boss.id"
+              @click="handleCardClick(boss, 2, letters)"
+              class="cursor-pointer"
+              :title="boss.name"
+              :category="getBossCategory(boss)"
+              :img-url="boss.image_url"
+              :difficulty="2"
+              :nbLetter="letters"
+          />
+        </div>
+      </div>
+      <div class="w-1/4 p-2">
+        <div class="flex flex-col space-y-4">
+          <Card
+              v-for="{ boss, letters } in hardBosses"
+              :key="boss.id"
+              @click="handleCardClick(boss, 3, letters)"
+              class="cursor-pointer"
+              :title="boss.name"
+              :category="getBossCategory(boss)"
+              :img-url="boss.image_url"
+              :difficulty="3"
+              :nbLetter="letters"
+          />
+        </div>
+      </div>
+      <div class="w-1/4 p-2">
+        <RouterLink to="shop">
+          <Card class="h-full" title="It's shopping time!" category="shop" img-url="Shop.png"/>
+        </RouterLink>
+      </div>
     </div>
   </div>
 </template>
 
-<style scoped>
-/* Add your styles here */
-</style>
