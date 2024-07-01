@@ -3,6 +3,52 @@ import {ArrowLeftIcon} from "@heroicons/vue/24/outline";
 import MainMenuButton from "@/components/buttons/MainMenuButton.vue";
 import ShopCard from "@/components/cards/ShopCard.vue";
 import Inventory from "@/components/Inventory.vue";
+
+import {computed, defineProps, onMounted, ref} from 'vue';
+
+interface Item {
+  id: number;
+  name: string;
+  description: string;
+  price: number;
+  image_url: string;
+  value: string;
+  itemCategories: { category: { name: string } }[];
+}
+
+import { useRouteStore } from "@/stores/routes";
+import axios from 'axios';
+const routeStore = useRouteStore();
+const isRoadselect = computed(() => !!routeStore.selectedRoute);
+const items = ref<Item[]>([]);
+
+const apiUrl = import.meta.env.VITE_API_URL;
+
+async function getShopItem() {
+ if(isRoadselect.value){
+   try {
+     const response = await axios.get(`${apiUrl}/items/search/level/difficulty/three/${routeStore.selectedRoute?.difficulty}`)
+     console.log('Response:', response.data)
+     return response.data;
+   } catch (error) {
+     console.error(`Error fetching player data: ${error}`);
+   }
+ } else {
+    alert('No route selected');
+ }
+}
+
+onMounted(async () => {
+  items.value = await getShopItem();
+});
+
+function getItemCategory(item: Item): string {
+  if (item.itemCategories && item.itemCategories.length > 0) {
+    return item.itemCategories[0].category.name;
+  }
+  return 'Unknown';
+}
+
 </script>
 
 <template>
@@ -13,9 +59,8 @@ import Inventory from "@/components/Inventory.vue";
   <div class="flex flex-col items-center">
     <div class="w-full max-w-screen-lg">
       <div class="grid grid-cols-1 md:grid-cols-3 gap-4 justify-items-center">
-        <ShopCard img-url="knife.png" description="Double les 3 prochaines attaques" :price="5" title="Dague" category="Objet d'attaque"/>
-        <ShopCard img-url="potion.png" description="Soigne 25 pv" :price="10" title="Potion" category="Objet de soin"/>
-        <ShopCard img-url="relife.png" description="Dite ‘NON’ à la mort, et passez votre tour." :price="50" title="Seconde main" category="Objet d'attaque"/>
+        <ShopCard v-for="item in items" img-url="knife.png" :description="item.description" :price="item.price" :title="item.name" :category="getItemCategory(item)"/>
+
       </div>
       <Inventory/>
     </div>
