@@ -8,8 +8,8 @@ import {io} from "socket.io-client";
 const socket = io('http://localhost:3000');
 
 let word = ref<string>("");
-let key_pressed = ref<string[]>([]);
-let input_key_pressed = ref<number>(0)
+let key_pressed = ref<string[]>(['']);
+let input_key_pressed = ref<number>(1)
 let trials = ref<string[]>([]);
 const MAXIMUM_TRIALS = 3;
 const message = ref<string>("");
@@ -18,10 +18,11 @@ onMounted(async () => {
   word.value = await getRandomWord();
   console.log(word.value)
   resetInput();
+  key_pressed.value[0] = word.value[0]
+  key_pressed.value[word.value.length-1] = word.value[word.value.length-1];
 });
 
 socket.on("wordIsEqual", (response) => {
-  console.log(response)
   if (response.equal) {
     changeWordToBeFound();
   } else {
@@ -59,7 +60,7 @@ async function changeWordToBeFound(): Promise<void> {
 
 function resetInput(): void {
   key_pressed.value = [];
-  input_key_pressed.value = 0;
+  input_key_pressed.value = 1;
   word.value.split("").forEach(letter => {
     key_pressed.value.push("");
   })
@@ -85,8 +86,10 @@ document.addEventListener('keydown', (event: KeyboardEvent) => {
   const keyName = event.key;
   if (!/^\p{L}$/u.test(keyName)) {
     if (keyName === "Backspace") {
-      input_key_pressed.value--;
-      key_pressed.value[input_key_pressed.value] = "";
+      if (input_key_pressed.value > 0 && input_key_pressed.value !== 1) {
+        input_key_pressed.value--;
+        key_pressed.value[input_key_pressed.value] = "";
+      }
     } else if (keyName === "Enter") {
       if (key_pressed.value.join('').length < word.value.length) {
         alert('Enter word too short!');
@@ -96,7 +99,7 @@ document.addEventListener('keydown', (event: KeyboardEvent) => {
       event.preventDefault();
     }
   } else {
-    if (input_key_pressed.value < word.value.length) {
+    if (input_key_pressed.value < word.value.length && input_key_pressed.value >= 1) {
       key_pressed.value[input_key_pressed.value] = event.key;
       input_key_pressed.value++;
     }
