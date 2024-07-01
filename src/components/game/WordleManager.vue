@@ -20,12 +20,25 @@ onMounted(async () => {
   resetInput();
 });
 
-socket.on("messageResponse", (response) => {
-  message.value = response;
+socket.on("wordIsEqual", (response) => {
+  console.log(response)
+  if (response.equal) {
+    changeWordToBeFound();
+  } else {
+    if (trials.value.length >= MAXIMUM_TRIALS) {
+      changeWordToBeFound();
+      //TODO: Retirer de la vie (et.ou du score?)
+    } else {
+      trials.value.push(key_pressed.value.join(''));
+      resetInput();
+    }
+  }
 })
 
 socket.on("wordVerificationResponse", (response) => {
-  console.log(response)
+  if (!response.exist) {
+    alert("Le mot n'existe pas");
+  }
 })
 
 async function getRandomWord(): Promise<string> {
@@ -78,7 +91,7 @@ document.addEventListener('keydown', (event: KeyboardEvent) => {
       if (key_pressed.value.join('').length < word.value.length) {
         alert('Enter word too short!');
       } else {
-        socket.emit("verifyWord", word.value);
+        socket.emit("verifyWord", key_pressed.value.join('') + '_' + word.value);
       }
       event.preventDefault();
     }
