@@ -66,22 +66,6 @@ function resetInput(): void {
   })
 }
 
-function verifyWord(trial: string): void {
-  if (trial === word.value) {
-    //TODO: Augmenter le score et voir avec la route si un autre mot doit être chargé ou c'est le tour du boss
-    changeWordToBeFound();
-  } else {
-    //Plus de tentatives
-    if (trials.value.length >= MAXIMUM_TRIALS) {
-      changeWordToBeFound();
-      //TODO: Retirer de la vie (et.ou du score?)
-    } else {
-      resetInput();
-      trials.value.push(trial);
-    }
-  }
-}
-
 document.addEventListener('keydown', (event: KeyboardEvent) => {
   const keyName = event.key;
   if (!/^\p{L}$/u.test(keyName)) {
