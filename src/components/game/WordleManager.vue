@@ -3,13 +3,11 @@ import {onMounted, ref} from "vue";
 import axios from "axios";
 import {io} from "socket.io-client";
 
-
-
 const socket = io('http://localhost:3000');
 
 let word = ref<string>("");
-let key_pressed = ref<string[]>([]);
-let input_key_pressed = ref<number>(0)
+let key_pressed = ref<string[]>(['']);
+let input_key_pressed = ref<number>(1)
 let trials = ref<string[]>([]);
 const MAXIMUM_TRIALS = 3;
 const message = ref<string>("");
@@ -18,14 +16,29 @@ onMounted(async () => {
   word.value = await getRandomWord();
   console.log(word.value)
   resetInput();
+  addFirstAndLastLetter();
 });
 
-socket.on("messageResponse", (response) => {
-  message.value = response;
+socket.on("wordIsEqual", (response) => {
+  if (response.equal) {
+    changeWordToBeFound();
+  } else {
+    if (trials.value.length >= MAXIMUM_TRIALS) {
+      alert('Défaite')
+      changeWordToBeFound();
+      //TODO: Retirer de la vie (et.ou du score?)
+    } else {
+      trials.value.push(key_pressed.value.join(''));
+      resetInput();
+      addFirstAndLastLetter();
+    }
+  }
 })
 
 socket.on("wordVerificationResponse", (response) => {
-  console.log(response)
+  if (!response.exist) {
+    alert("Le mot n'existe pas");
+  }
 })
 
 async function getRandomWord(): Promise<string> {
@@ -42,48 +55,40 @@ async function changeWordToBeFound(): Promise<void> {
   console.log(word.value)
   trials.value = [];
   resetInput();
+  addFirstAndLastLetter();
+}
+
+function addFirstAndLastLetter() {
+  key_pressed.value[0] = word.value[0]
+  key_pressed.value[word.value.length-1] = word.value[word.value.length-1];
 }
 
 function resetInput(): void {
   key_pressed.value = [];
-  input_key_pressed.value = 0;
+  input_key_pressed.value = 1;
   word.value.split("").forEach(letter => {
     key_pressed.value.push("");
   })
-}
-
-function verifyWord(trial: string): void {
-  if (trial === word.value) {
-    //TODO: Augmenter le score et voir avec la route si un autre mot doit être chargé ou c'est le tour du boss
-    changeWordToBeFound();
-  } else {
-    //Plus de tentatives
-    if (trials.value.length >= MAXIMUM_TRIALS) {
-      changeWordToBeFound();
-      //TODO: Retirer de la vie (et.ou du score?)
-    } else {
-      resetInput();
-      trials.value.push(trial);
-    }
-  }
 }
 
 document.addEventListener('keydown', (event: KeyboardEvent) => {
   const keyName = event.key;
   if (!/^\p{L}$/u.test(keyName)) {
     if (keyName === "Backspace") {
-      input_key_pressed.value--;
-      key_pressed.value[input_key_pressed.value] = "";
+      if (input_key_pressed.value > 0 && input_key_pressed.value !== 1) {
+        input_key_pressed.value--;
+        key_pressed.value[input_key_pressed.value] = "";
+      }
     } else if (keyName === "Enter") {
       if (key_pressed.value.join('').length < word.value.length) {
         alert('Enter word too short!');
       } else {
-        socket.emit("verifyWord", word.value);
+        socket.emit("verifyWord", key_pressed.value.join('') + '_' + word.value);
       }
       event.preventDefault();
     }
   } else {
-    if (input_key_pressed.value < word.value.length) {
+    if (input_key_pressed.value < word.value.length && input_key_pressed.value >= 1 && input_key_pressed.value < word.value.length - 1) {
       key_pressed.value[input_key_pressed.value] = event.key;
       input_key_pressed.value++;
     }
