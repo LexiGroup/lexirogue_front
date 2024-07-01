@@ -28,7 +28,6 @@ async function getShopItem() {
  if(isRoadselect.value){
    try {
      const response = await axios.get(`${apiUrl}/items/search/level/difficulty/three/${routeStore.selectedRoute?.difficulty}`)
-     console.log('Response:', response.data)
      return response.data;
    } catch (error) {
      console.error(`Error fetching player data: ${error}`);

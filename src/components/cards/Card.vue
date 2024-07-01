@@ -10,7 +10,6 @@ const props = defineProps<{
   nbLetter?: number
 }>()
 
-console.log('Props in Card.vue:', props);
 
 const difficultyRef = ref(props.difficulty);
 

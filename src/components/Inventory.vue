@@ -1,11 +1,35 @@
 <script setup lang="ts">
 import HeroIcon from "@/components/icons/HeroIcon.vue";
 import {BeakerIcon, KeyIcon, RocketLaunchIcon, ScissorsIcon, ShieldCheckIcon} from "@heroicons/vue/24/outline";
+import {onMounted, ref} from "vue";
+import axios from 'axios';
+import { useAuthStore } from "@/stores/auth";
+
+const authStore = useAuthStore();
+
+const ApiUrl = import.meta.env.VITE_API_URL;
 
 interface Item {
   id: number;
   name: string;
 }
+
+const items = ref<Item[]>([]);
+
+async function getInventoryItem() {
+ try {
+  const response = await axios.get(`${ApiUrl}/game/player/${authStore.player!.id}/inventory`)
+   console.log(response.data);
+  return response.data
+ } catch (error) {
+   console.error(`Error fetching player data: ${error}`);
+ }
+}
+
+onMounted(async () => {
+  items.value = await getInventoryItem();
+});
+
 </script>
 
 <template>
