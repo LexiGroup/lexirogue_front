@@ -3,8 +3,6 @@ import {onMounted, ref} from "vue";
 import axios from "axios";
 import {io} from "socket.io-client";
 
-
-
 const socket = io('http://localhost:3000');
 
 let word = ref<string>("");
