@@ -28,11 +28,11 @@ const easyBosses = ref<{ boss: Boss, letters: number }[]>([]);
 const normalBosses = ref<{ boss: Boss, letters: number }[]>([]);
 const hardBosses = ref<{ boss: Boss, letters: number }[]>([]);
 const isAuthenticated = computed(() => !!authStore.token);
+const isRoadselect = computed(() => !!routeStore.selectedRoute);
 
 async function fetchPlayerData(playerId: number) {
   try {
     const response = await axios.get(`${apiUrl}/game/player/${playerId}`);
-    console.log('Player data:', response.data);
   } catch (error) {
     console.error(`Error fetching player data: ${error}`);
   }
@@ -54,9 +54,6 @@ function getNumberLetter(level: number): number {
 
 onMounted(async () => {
   const allBosses = await getBosses();
-  console.log('All bosses:', allBosses);
-
-  // Répartir les bosses en trois groupes : facile, moyen, difficile
   allBosses.forEach((boss, index) => {
     let difficulty: number;
     if (index % 3 === 0) {
@@ -75,15 +72,10 @@ onMounted(async () => {
     } else if (difficulty === 3) {
       hardBosses.value.push({ boss, letters });
     }
-    console.log(`Boss: ${boss.name}, Difficulty: ${difficulty}, Letters: ${letters}`);
   });
 
-  console.log('Easy bosses:', easyBosses.value);
-  console.log('Normal bosses:', normalBosses.value);
-  console.log('Hard bosses:', hardBosses.value);
 
   if (authStore.player?.id) {
-    console.log('fetching player data');
     await fetchPlayerData(authStore.player.id);
   }
 });
@@ -99,7 +91,7 @@ watch(
 
 async function getBosses(): Promise<Boss[]> {
   try {
-    const response = await axios.get<Boss[]>('http://localhost:3000/boss/three');
+    const response = await axios.get<Boss[]>(`${apiUrl}/boss/three`);
     return response.data;
   } catch (error) {
     console.error('Error fetching bosses:', error);
@@ -177,7 +169,7 @@ function handleCardClick(boss: Boss, difficulty: number, letters: number) {
       </div>
       <div class="w-1/4 p-2">
         <RouterLink to="shop">
-          <Card class="h-full" title="It's shopping time!" category="shop" img-url="Shop.png"/>
+          <Card v-if="isRoadselect" class="h-full" title="It's shopping time!" category="shop" img-url="Shop.png"/>
         </RouterLink>
       </div>
     </div>
