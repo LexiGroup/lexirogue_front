@@ -87,7 +87,6 @@ document.addEventListener('keydown', (event: KeyboardEvent) => {
       event.preventDefault();
     }
   } else {
-    console.log(input_key_pressed.value + '/' + word.value.length)
     if (input_key_pressed.value < word.value.length && input_key_pressed.value >= 1 && input_key_pressed.value < word.value.length - 1) {
       key_pressed.value[input_key_pressed.value] = event.key;
       input_key_pressed.value++;
