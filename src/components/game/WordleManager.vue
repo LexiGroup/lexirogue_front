@@ -18,8 +18,7 @@ onMounted(async () => {
   word.value = await getRandomWord();
   console.log(word.value)
   resetInput();
-  key_pressed.value[0] = word.value[0]
-  key_pressed.value[word.value.length-1] = word.value[word.value.length-1];
+  addFirstAndLastLetter();
 });
 
 socket.on("wordIsEqual", (response) => {
@@ -32,6 +31,7 @@ socket.on("wordIsEqual", (response) => {
     } else {
       trials.value.push(key_pressed.value.join(''));
       resetInput();
+      addFirstAndLastLetter();
     }
   }
 })
@@ -56,6 +56,12 @@ async function changeWordToBeFound(): Promise<void> {
   console.log(word.value)
   trials.value = [];
   resetInput();
+  addFirstAndLastLetter();
+}
+
+function addFirstAndLastLetter() {
+  key_pressed.value[0] = word.value[0]
+  key_pressed.value[word.value.length-1] = word.value[word.value.length-1];
 }
 
 function resetInput(): void {
@@ -83,7 +89,8 @@ document.addEventListener('keydown', (event: KeyboardEvent) => {
       event.preventDefault();
     }
   } else {
-    if (input_key_pressed.value < word.value.length && input_key_pressed.value >= 1) {
+    console.log(input_key_pressed.value + '/' + word.value.length)
+    if (input_key_pressed.value < word.value.length && input_key_pressed.value >= 1 && input_key_pressed.value < word.value.length - 1) {
       key_pressed.value[input_key_pressed.value] = event.key;
       input_key_pressed.value++;
     }
