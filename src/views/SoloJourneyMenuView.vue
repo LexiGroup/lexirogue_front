@@ -167,7 +167,7 @@ function handleCardClick(boss: Boss, difficulty: number, letters: number) {
           />
         </div>
       </div>
-      <div class="w-1/4 p-2">
+      <div v-if="isRoadselect" class="w-1/4 p-2">
         <RouterLink to="shop">
           <Card v-if="isRoadselect" class="h-full" title="It's shopping time!" category="shop" img-url="Shop.png"/>
         </RouterLink>
