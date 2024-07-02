@@ -8,6 +8,7 @@ import { RouterLink } from 'vue-router';
 import { useAuthStore } from '@/stores/auth';
 import {useRouteStore} from "@/stores/routes";
 import router from "@/router";
+import Back from "@/components/buttons/back.vue";
 
 const authStore = useAuthStore();
 const routeStore = useRouteStore();
@@ -120,8 +121,8 @@ function handleCardClick(boss: Boss, difficulty: number, letters: number) {
 
 <template>
   <div>
-    <MainMenuButton background-color="transparent" target="/" :label="ArrowLeftIcon" class="absolute top-3 left-32" />
-    <div class="flex flex-row flex-wrap justify-center mt-32">
+    <back background-color="white" :label="ArrowLeftIcon" />
+    <div class="flex flex-row flex-wrap justify-center mt-20">
       <div class="w-1/4 p-2">
         <div class="flex flex-col space-y-4">
           <Card
