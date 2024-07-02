@@ -40,7 +40,7 @@ watch(
   <div class="flex flex-col h-full hover:bg-gray-100 rounded-md border-4 border-black p-3 scale-95 hover:scale-100 mx-4">
     <div :class="['bg-primary-' + difficultyColor, 'p-5', 'rounded', 'w-full', 'h-full']">
       <div>
-        <img class="object-cover object-center w-full h-[200px]" :src="props.imgUrl" :alt="title">
+        <img class="object-cover object-center w-full h-[200px]" :src="'src/assets/img/'+props.imgUrl" :alt="title">
       </div>
       <div>
         <p class="text-4xl flex justify-center items-center my-2 text-center">{{ title }} <span v-if="!props.difficulty"><!--<component :is="ShoppingBagIcon" class="w-8"/>--></span></p>
