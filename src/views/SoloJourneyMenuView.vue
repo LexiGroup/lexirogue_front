@@ -42,11 +42,11 @@ async function fetchPlayerData(playerId: number) {
 function getNumberLetter(level: number): number {
   let length: number;
   if (level === 1) {
-    length = Math.floor(Math.random() * (5 - 3 + 1)) + 3;
+    length = Math.floor(Math.random() * (6 - 4 + 1)) + 4;
   } else if (level === 2) {
-    length = Math.floor(Math.random() * (8 - 6 + 1)) + 6;
+    length = Math.floor(Math.random() * (13 - 7 + 1)) + 7;
   } else if (level === 3) {
-    length = Math.floor(Math.random() * (14 - 7 + 1)) + 7;
+    length = Math.floor(Math.random() * (20 - 14 + 1)) + 14;
   } else {
     length = 0;
   }
