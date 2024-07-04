@@ -121,7 +121,7 @@ function handleCardClick(boss: Boss, difficulty: number, letters: number) {
 
 <template>
   <div>
-    <back background-color="white" :label="ArrowLeftIcon" />
+    <back background-color="white" :label="ArrowLeftIcon" target="/"/>
     <div class="flex flex-row flex-wrap justify-center mt-20">
       <div class="w-1/4 p-2">
         <div class="flex flex-col space-y-4">

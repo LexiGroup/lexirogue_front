@@ -11,6 +11,7 @@ import {onMounted, ref, watch} from "vue";
 import { useAuthStore } from '@/stores/auth';
 import axios from "axios";
 import LifeUi from "@/components/game/LifeUi.vue";
+import Back from "@/components/buttons/back.vue";
 
 const authStore = useAuthStore();
 const playerLife = ref<number>(0);
@@ -51,7 +52,7 @@ watch(
 <template>
   <div class="grid grid-cols-5 grid-rows-3 h-screen">
     <div>
-      <MainMenuButton background-color="transparent" target="play" :label="ArrowLeftIcon"
+      <back background-color="transparent" target="play" :label="ArrowLeftIcon"
                       class="lg:left-32"/>
       <BuffDebuff color="red"/>
       <BuffDebuff color="yellow"/>

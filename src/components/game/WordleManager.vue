@@ -2,6 +2,8 @@
 import {onMounted, ref} from "vue";
 import axios from "axios";
 import {io} from "socket.io-client";
+import {useRouteStore} from "@/stores/routes";
+import router from "@/router";
 
 const socket = io('http://localhost:3000');
 
@@ -11,6 +13,7 @@ let input_key_pressed = ref<number>(1)
 let trials = ref<string[]>([]);
 const MAXIMUM_TRIALS = 3;
 const message = ref<string>("");
+const routeStore = useRouteStore();
 
 onMounted(async () => {
   word.value = await getRandomWord();
@@ -42,12 +45,19 @@ socket.on("wordVerificationResponse", (response) => {
 })
 
 async function getRandomWord(): Promise<string> {
-  try {
-    const response = await axios.get("http://localhost:3000/word/random");
-    return response.data.ortho;
-  } catch (error) {
+  if(routeStore.selectedRoute){
+    try {
+      const response = await axios.get(`http://localhost:3000/word/random/${routeStore.selectedRoute.nbLetter}/${routeStore.selectedRoute.difficulty}`);
+      return response.data.ortho;
+    } catch (error) {
+      return "Possum";
+    }
+  } else {
+    console.log('No route selected')
+    await router.push('/play');
     return "Possum";
   }
+
 }
 
 async function changeWordToBeFound(): Promise<void> {

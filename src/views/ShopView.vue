@@ -18,6 +18,7 @@ interface Item {
 
 import { useRouteStore } from "@/stores/routes";
 import axios from 'axios';
+import Back from "@/components/buttons/back.vue";
 const routeStore = useRouteStore();
 const isRoadselect = computed(() => !!routeStore.selectedRoute);
 const items = ref<Item[]>([]);
@@ -53,7 +54,7 @@ function getItemCategory(item: Item): string {
 
 <template>
   <div class="h-20 mb-6 flex flex-row items-center justify-center">
-    <MainMenuButton background-color="transparent" target="play" :label="ArrowLeftIcon" class="absolute top-3 left-4 sm:left-8 md:left-16 lg:left-32" />
+    <back background-color="transparent" target="play" :label="ArrowLeftIcon" class="absolute top-3 left-4 sm:left-8 md:left-16 lg:left-32" />
     <p class="bg-gray-950 h-full text-white p-4 sm:p-6 hidden md:block">SCOREBOARD PLACEHOLDER</p>
   </div>
   <div class="flex flex-col items-center">
